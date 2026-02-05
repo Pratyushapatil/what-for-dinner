@@ -1,5 +1,5 @@
 import './App.css'
-import MealForm from './componens/mealform'
+import MealForm from './Screens/mealform'
 
 function App() {
   return (

@@ -1,10 +1,17 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
+
+import LunchAndDinnerTable from '../lib/components/LunchAndDinnerTable/LunchAndDinnerTable';
+import MealStorage, { type Meal } from '../lib/utils/MealStorage'
 
 const MealForm = () => {
   const [mealName, setMealName] = useState('')
   const [mealType, setMealType] = useState('')
-  const [meals, setMeals] = useState<{ name: string; type: 'lunch' | 'dinner' }[]>([])
+  const [meals, setMeals] = useState<Meal[]>([])
+
+  useEffect(() => {
+    setMeals(MealStorage.load())
+  }, [])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -14,12 +21,28 @@ const MealForm = () => {
       return
     }
 
-    setMeals((currentMeals) => [
-      ...currentMeals,
-      { name: trimmedName, type: mealType },
-    ])
+    setMeals((currentMeals) => {
+      const nextMeals = [
+        ...currentMeals,
+        {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          name: trimmedName,
+          type: mealType,
+        },
+      ]
+      MealStorage.save(nextMeals)
+      return nextMeals
+    })
     setMealName('')
     setMealType('')
+  }
+
+  const handleDelete = (mealId: string) => {
+    setMeals((currentMeals) => {
+      const nextMeals = currentMeals.filter((meal) => meal.id !== mealId)
+      MealStorage.save(nextMeals)
+      return nextMeals
+    })
   }
 
   const lunchMeals = useMemo(
@@ -32,7 +55,7 @@ const MealForm = () => {
   )
 
   return (
-    <div className='bg-white dark:bg-gray-800 text-black dark:text-white'>
+    <div className="bg-white dark:bg-gray-800 text-black dark:text-white">
       <form
         className="flex flex-col gap-8 border border-gray-300 p-4 rounded-md"
         onSubmit={handleSubmit}
@@ -70,40 +93,26 @@ const MealForm = () => {
           <button type="submit">Submit</button>
         </div>
       </form>
-      <table className="mt-8 w-full  border-collapse border border-gray-300">
-        <thead>
-          <tr>
-            <th className="border border-gray-300 px-4 py-2 text-left">
-              Lunch
-            </th>
-            <th className="border border-gray-300 px-4 py-2 text-left">
-              Dinner
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {Math.max(lunchMeals.length, dinnerMeals.length) === 0 ? (
-            <tr>
-              <td className="border border-gray-300 px-4 py-2" colSpan={2}>
-                No meals added yet.
-              </td>
-            </tr>
-          ) : (
-            Array.from({
-              length: Math.max(lunchMeals.length, dinnerMeals.length),
-            }).map((_, index) => (
-              <tr key={`meal-row-${index}`}>
-                <td className="border border-gray-300 px-4 py-2">
-                  {lunchMeals[index]?.name ?? ''}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {dinnerMeals[index]?.name ?? ''}
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+      <div className="mt-8">
+        {Math.max(lunchMeals.length, dinnerMeals.length) === 0 ? (
+          <div className="border border-gray-300 rounded-md px-4 py-2">
+            No meals added yet.
+          </div>
+        ) : (
+          <div className="flex md:flex-row flex-center md:justify-center gap-4 py-2">
+            <LunchAndDinnerTable
+              mealType="lunch"
+              lunchMeals={lunchMeals}
+              handleDelete={handleDelete}
+            />
+            <LunchAndDinnerTable
+              mealType="dinner"
+              dinnerMeals={dinnerMeals}
+              handleDelete={handleDelete}
+            />
+          </div>
+        )}
+      </div>
     </div>
   )
 }

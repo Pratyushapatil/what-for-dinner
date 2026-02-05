@@ -6,7 +6,7 @@ import MealStorage, { type Meal } from '../lib/utils/MealStorage'
 
 const MealForm = () => {
   const [mealName, setMealName] = useState('')
-  const [mealType, setMealType] = useState('')
+  const [mealType, setMealType] = useState<'lunch' | 'dinner' | ''>('')
   const [meals, setMeals] = useState<Meal[]>([])
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const MealForm = () => {
             name="mealType"
             value={mealType}
             onChange={(event: ChangeEvent<HTMLSelectElement>) =>
-              setMealType(event.target.value)
+              setMealType(event.target.value as 'lunch' | 'dinner' | '')
             }
           >
             <option value="">Select a meal type</option>

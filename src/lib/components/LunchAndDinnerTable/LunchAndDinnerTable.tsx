@@ -13,8 +13,8 @@ export default function LunchAndDinnerTable (props: Props) {
   const mealsToDisplay = mealType === 'lunch' ? lunchMeals : dinnerMeals;
 
   return (
-       <div className="border border-gray-300 rounded-md">
-              <div className="border-b border-gray-300 px-4 py-2 font-semibold">
+       <div className="rounded-2xl bg-white shadow-md">
+              <div className="px-4 py-3 font-semibold text-gray-700">
                 {props.mealType === 'lunch' ? 'Lunch' : 'Dinner'}
               </div>
               <div >

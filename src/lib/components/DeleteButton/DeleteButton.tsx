@@ -1,13 +1,13 @@
-import DeleteButtonProps from "./DeleteButton.props";
+import DeleteButtonProps from './DeleteButton.props'
 
-const DeleteButton = ( props: DeleteButtonProps) => (
+const DeleteButton = (props: DeleteButtonProps) => (
   <button
     type="button"
-    className={`text-sm text-white-600 bg-red-700 px-2 py-2 rounded`}
+    className="ml-auto flex h-8 w-8 items-center justify-center text-red-700 font-bold"
     onClick={props.onClick}
->
+  >
     {props.label ?? 'Delete'}
   </button>
 )
 
-export default DeleteButton;
+export default DeleteButton

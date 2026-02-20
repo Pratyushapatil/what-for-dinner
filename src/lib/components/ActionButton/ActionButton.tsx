@@ -1,4 +1,5 @@
 import type ActionButtonProps from './ActionButton.props'
+import { APP_COLORS } from '../../constants/colors'
 
 const BaseActionButton = ({ children, className, ...buttonProps }: ActionButtonProps) => (
   <button type="button" className={className} {...buttonProps}>
@@ -8,7 +9,8 @@ const BaseActionButton = ({ children, className, ...buttonProps }: ActionButtonP
 
 export const AddActionButton = ({ children, className, ...buttonProps }: ActionButtonProps) => (
   <BaseActionButton
-    className={`flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-200 text-emerald-700 shadow-sm font-extrabold ${className ?? ''}`}
+    className={`flex h-10 w-10 items-center justify-center rounded-xl shadow-sm font-extrabold ${className ?? ''}`}
+    style={{ backgroundColor: APP_COLORS.lunchSoftBg, color: APP_COLORS.lunchAccent }}
     {...buttonProps}
   >
     {children ?? 'Add'}

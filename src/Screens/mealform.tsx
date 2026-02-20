@@ -40,7 +40,7 @@ const MealForm = () => {
             title="Lunch Options"
             emptyMessage="No lunch meals yet."
             meals={lunchMeals}
-            badgeClassName="bg-emerald-200"
+            badgeStyle={{ backgroundColor: APP_COLORS.lunchBadgeBg }}
             wrapperClassName="rounded-xl border border-dashed px-4 py-3 shadow-sm md:basis-1/4"
             wrapperStyle={{
               borderColor: APP_COLORS.lunchAccent,

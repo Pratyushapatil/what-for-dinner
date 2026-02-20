@@ -17,19 +17,22 @@ const MealComposer = ({
   onQuickTypeChange,
   onAdd,
 }: MealComposerProps) => (
-  <div className="mt-8 flex flex-row gap-4">
-    <div className="mb-2 flex flex-center gap-4 rounded-md border border-gray-100 px-4 py-2 shadow-sm md:basis-1/2 md:flex-col md:justify-center">
-      <h2 className="px-4 text-lg font-semibold">Add New Meals</h2>
-      <div className="mb-2 flex flex-row gap-4">
+  <div className="mt-4 flex flex-row gap-4">
+    <div
+      className="mb-2 w-full space-y-4 rounded-3xl border bg-white px-4 py-4 shadow-sm md:basis-1/2"
+      style={{ borderColor: APP_COLORS.dropZoneBg }}
+    >
+      <div className="grid grid-cols-2 rounded-2xl bg-slate-200 p-1">
         <button
           type="button"
-          className="flex min-w-[160px] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold shadow-sm text-gray-500"
+          className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-lg font-semibold text-slate-500"
           onClick={() => onQuickTypeChange('lunch')}
           style={
             quickMealType === 'lunch'
               ? {
-                  color: 'white',
-                  backgroundImage: `linear-gradient(to right, ${APP_COLORS.lunchGradientStart}, ${APP_COLORS.lunchAccent})`,
+                  color: APP_COLORS.lunchAccent,
+                  backgroundColor: 'white',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.12)',
                 }
               : undefined
           }
@@ -38,16 +41,14 @@ const MealComposer = ({
         </button>
         <button
           type="button"
-          className="flex min-w-[160px] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold shadow-sm text-gray-500"
+          className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-lg font-semibold text-slate-500"
           onClick={() => onQuickTypeChange('dinner')}
           style={
             quickMealType === 'dinner'
               ? {
-                  color: 'white',
-                  borderColor: APP_COLORS.dinnerAccent,
-                  borderWidth: '1px',
-                  borderStyle: 'solid',
-                  backgroundImage: `linear-gradient(to right, ${APP_COLORS.dinnerGradientStart}, ${APP_COLORS.dinnerAccent})`,
+                  color: APP_COLORS.dinnerAccent,
+                  backgroundColor: 'white',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.12)',
                 }
               : undefined
           }
@@ -55,7 +56,7 @@ const MealComposer = ({
           <span>Dinner</span>
         </button>
       </div>
-      <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+      <div className="flex items-center gap-3 rounded-2xl border border-slate-300 bg-slate-100 px-3 py-2">
         <label htmlFor="meal-name" className="sr-only">
           Meal name
         </label>
@@ -65,11 +66,16 @@ const MealComposer = ({
           type="text"
           value={mealName}
           onChange={(event) => onMealNameChange(event.target.value)}
-          placeholder="Enter meal name..."
-          className="flex-1 bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
+          placeholder="e.g. Paneer wrap"
+          className="flex-1 bg-transparent text-lg text-slate-700 outline-none placeholder:text-slate-400"
         />
 
-        <AddButton aria-label={`Add ${quickMealType} meal`} onClick={() => onAdd(quickMealType)}>
+        <AddButton
+          aria-label={`Add ${quickMealType} meal`}
+          className="h-11 w-12 rounded-xl"
+          style={{ backgroundColor: APP_COLORS.mealHeaderTitleStart, color: 'white' }}
+          onClick={() => onAdd(quickMealType)}
+        >
           +
         </AddButton>
       </div>

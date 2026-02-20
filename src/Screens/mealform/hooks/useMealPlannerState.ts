@@ -63,6 +63,41 @@ const useMealPlannerState = () => {
     )
   }, [])
 
+  const duplicateMeal = useCallback((mealId: string) => {
+    setMeals((currentMeals) => {
+      const sourceMeal = currentMeals.find((meal) => meal.id === mealId)
+      if (!sourceMeal) {
+        return currentMeals
+      }
+
+      const nextMeals = [
+        {
+          ...sourceMeal,
+          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          name: `${sourceMeal.name} (Copy)`,
+        },
+        ...currentMeals,
+      ]
+      MealStorage.save(nextMeals)
+      return nextMeals
+    })
+  }, [])
+
+  const editMealName = useCallback((mealId: string, nextName: string) => {
+    const trimmedName = nextName.trim()
+    if (!trimmedName) {
+      return
+    }
+
+    setMeals((currentMeals) => {
+      const nextMeals = currentMeals.map((meal) =>
+        meal.id === mealId ? { ...meal, name: trimmedName } : meal,
+      )
+      MealStorage.save(nextMeals)
+      return nextMeals
+    })
+  }, [])
+
   const { lunchMeals, dinnerMeals, mealNameById, mealTypeById } = useMemo(() => {
     const lunch: Meal[] = []
     const dinner: Meal[] = []
@@ -125,6 +160,21 @@ const useMealPlannerState = () => {
     }))
   }, [mealTypeById])
 
+  const assignMealToSlot = useCallback((day: WeekDay, slot: WeekSlot, mealId: string) => {
+    const mealType = mealTypeById.get(mealId)
+    if (mealType !== slot) {
+      return
+    }
+
+    setWeeklyPlan((currentPlan) => ({
+      ...currentPlan,
+      [day]: {
+        ...currentPlan[day],
+        [slot]: mealId,
+      },
+    }))
+  }, [mealTypeById])
+
   const handleClearPlan = useCallback(() => {
     setWeeklyPlan(createEmptyWeeklyPlan())
   }, [])
@@ -141,9 +191,12 @@ const useMealPlannerState = () => {
     addMeal,
     handleSubmit,
     handleDelete,
+    duplicateMeal,
+    editMealName,
     handleMealDragStart,
     handleDragOverCell,
     handleDropInCell,
+    assignMealToSlot,
     handleClearPlan,
   }
 }

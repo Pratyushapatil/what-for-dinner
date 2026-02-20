@@ -1,4 +1,4 @@
-import type { DragEvent } from 'react'
+import type { CSSProperties, DragEvent } from 'react'
 import DeleteButton from '../../../lib/components/DeleteButton'
 import type { Meal } from '../../../lib/utils/MealStorage'
 import type { WeekSlot } from '../model'
@@ -7,9 +7,12 @@ type MealListCardProps = {
   title: string
   emptyMessage: string
   meals: Meal[]
-  badgeClassName: string
+  badgeClassName?: string
+  badgeStyle?: CSSProperties
   wrapperClassName: string
+  wrapperStyle?: CSSProperties
   itemClassName: string
+  itemStyle?: CSSProperties
   slot: WeekSlot
   onDragStart: (event: DragEvent<HTMLDivElement>, mealId: string, slot: WeekSlot) => void
   onDelete: (mealId: string) => void
@@ -20,17 +23,21 @@ const MealListCard = ({
   emptyMessage,
   meals,
   badgeClassName,
+  badgeStyle,
   wrapperClassName,
+  wrapperStyle,
   itemClassName,
+  itemStyle,
   slot,
   onDragStart,
   onDelete,
 }: MealListCardProps) => (
-  <div className={wrapperClassName}>
+  <div className={wrapperClassName} style={wrapperStyle}>
     <div className="flex items-center justify-between">
       <h3 className="text-lg font-bold text-emerald-800">{title}</h3>
       <span
-        className={`flex h-6 w-6 items-center justify-center rounded-full text-sm font-semibold text-emerald-800 ${badgeClassName}`}
+        className={`flex h-6 w-6 items-center justify-center rounded-full text-sm font-semibold text-emerald-800 ${badgeClassName ?? ''}`}
+        style={badgeStyle}
       >
         {meals.length}
       </span>
@@ -45,6 +52,7 @@ const MealListCard = ({
             draggable
             onDragStart={(event) => onDragStart(event, meal.id, slot)}
             className={itemClassName}
+            style={itemStyle}
           >
             <span>{meal.name}</span>
             <DeleteButton aria-label={`Delete ${meal.name}`} onClick={() => onDelete(meal.id)}>

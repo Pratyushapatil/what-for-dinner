@@ -1,4 +1,5 @@
 import type { DragEvent } from 'react'
+import { APP_COLORS } from '../../../lib/constants/colors'
 import { WEEK_DAYS, type WeekDay, type WeekSlot, type WeeklyPlan } from '../model'
 
 type WeeklyPlanTableProps = {
@@ -24,10 +25,16 @@ const WeeklyPlanTable = ({ weeklyPlan, mealNameById, onDragOver, onDrop, onClear
     <div className="mt-3 flex flex-col overflow-hidden rounded-md border border-gray-200">
       <div className="flex bg-gray-50">
         <div className="basis-1/3 border-r border-b border-gray-200 p-3 text-sm font-semibold">Day</div>
-        <div className="basis-1/3 border-r border-b border-gray-200 bg-[#F0FFF0] p-3 text-sm font-semibold">
+        <div
+          className="basis-1/3 border-r border-b border-gray-200 p-3 text-sm font-semibold"
+          style={{ backgroundColor: APP_COLORS.lunchSoftBg }}
+        >
           Lunch
         </div>
-        <div className="basis-1/3 border-b border-gray-200 bg-[#B5E6E4] p-3 text-sm font-semibold">
+        <div
+          className="basis-1/3 border-b border-gray-200 p-3 text-sm font-semibold"
+          style={{ backgroundColor: APP_COLORS.dinnerSoftBg }}
+        >
           Dinner
         </div>
       </div>
@@ -42,11 +49,20 @@ const WeeklyPlanTable = ({ weeklyPlan, mealNameById, onDragOver, onDrop, onClear
             className="basis-1/3 border-r border-b border-gray-200 p-3 text-sm"
           >
             {weeklyPlan[day]?.lunch ? (
-              <div className="w-full rounded-xl border border-[#5fc52e] bg-[#F0FFF0] px-4 py-3 text-sm font-semibold text-black">
+              <div
+                className="w-full rounded-xl border px-4 py-3 text-sm font-semibold text-black"
+                style={{
+                  borderColor: APP_COLORS.lunchAccent,
+                  backgroundColor: APP_COLORS.lunchSoftBg,
+                }}
+              >
                 {mealNameById.get(weeklyPlan[day]?.lunch ?? '')}
               </div>
             ) : (
-              <div className="flex w-full items-center justify-center rounded-xl bg-[#e5e7eb] px-4 py-3 text-sm text-gray-400">
+              <div
+                className="flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm text-gray-400"
+                style={{ backgroundColor: APP_COLORS.dropZoneBg }}
+              >
                 Drop here
               </div>
             )}
@@ -57,11 +73,20 @@ const WeeklyPlanTable = ({ weeklyPlan, mealNameById, onDragOver, onDrop, onClear
             className="basis-1/3 border-b border-gray-200 p-3 text-sm"
           >
             {weeklyPlan[day]?.dinner ? (
-              <div className="w-full rounded-xl border border-[#8bded8] bg-[#d3e8e7] px-4 py-3 text-sm font-semibold text-black">
+              <div
+                className="w-full rounded-xl border px-4 py-3 text-sm font-semibold text-black"
+                style={{
+                  borderColor: APP_COLORS.dinnerBorder,
+                  backgroundColor: APP_COLORS.dinnerSoftCardBg,
+                }}
+              >
                 {mealNameById.get(weeklyPlan[day]?.dinner ?? '')}
               </div>
             ) : (
-              <div className="flex w-full items-center justify-center rounded-xl bg-[#e5e7eb] px-4 py-3 text-sm text-gray-400">
+              <div
+                className="flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm text-gray-400"
+                style={{ backgroundColor: APP_COLORS.dropZoneBg }}
+              >
                 Drop here
               </div>
             )}

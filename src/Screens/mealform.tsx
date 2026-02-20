@@ -3,6 +3,7 @@ import MealListCard from './mealform/components/MealListCard'
 import PlannerHeader from './mealform/components/PlannerHeader'
 import WeeklyPlanTable from './mealform/components/WeeklyPlanTable'
 import useMealPlannerState from './mealform/hooks/useMealPlannerState'
+import { APP_COLORS } from '../lib/constants/colors'
 
 const MealForm = () => {
   const {
@@ -40,8 +41,13 @@ const MealForm = () => {
             emptyMessage="No lunch meals yet."
             meals={lunchMeals}
             badgeClassName="bg-emerald-200"
-            wrapperClassName="rounded-xl border border-dashed border-[#5fc52e] bg-[#F0FFF0] px-4 py-3 shadow-sm md:basis-1/4"
-            itemClassName="flex cursor-grab items-center gap-2 rounded-lg border border-[#5fc52e] bg-transparent px-3 py-2 text-sm font-semibold text-black active:cursor-grabbing"
+            wrapperClassName="rounded-xl border border-dashed px-4 py-3 shadow-sm md:basis-1/4"
+            wrapperStyle={{
+              borderColor: APP_COLORS.lunchAccent,
+              backgroundColor: APP_COLORS.lunchSoftBg,
+            }}
+            itemClassName="flex cursor-grab items-center gap-2 rounded-lg border bg-transparent px-3 py-2 text-sm font-semibold text-black active:cursor-grabbing"
+            itemStyle={{ borderColor: APP_COLORS.lunchAccent }}
             slot="lunch"
             onDragStart={handleMealDragStart}
             onDelete={handleDelete}
@@ -51,8 +57,13 @@ const MealForm = () => {
             emptyMessage="No dinner meals yet."
             meals={dinnerMeals}
             badgeClassName="bg-white"
-            wrapperClassName="rounded-xl border border-dashed border-[#32c4c0] bg-[#B5E6E4] px-4 py-3 shadow-sm md:basis-1/4"
-            itemClassName="flex cursor-grab items-center gap-2 rounded-lg border border-[#32c4c0] bg-transparent px-3 py-2 text-sm font-semibold text-black active:cursor-grabbing"
+            wrapperClassName="rounded-xl border border-dashed px-4 py-3 shadow-sm md:basis-1/4"
+            wrapperStyle={{
+              borderColor: APP_COLORS.dinnerAccent,
+              backgroundColor: APP_COLORS.dinnerSoftBg,
+            }}
+            itemClassName="flex cursor-grab items-center gap-2 rounded-lg border bg-transparent px-3 py-2 text-sm font-semibold text-black active:cursor-grabbing"
+            itemStyle={{ borderColor: APP_COLORS.dinnerAccent }}
             slot="dinner"
             onDragStart={handleMealDragStart}
             onDelete={handleDelete}

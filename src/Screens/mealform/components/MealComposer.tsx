@@ -1,4 +1,5 @@
 import AddButton from '../../../lib/components/AddButton'
+import { APP_COLORS } from '../../../lib/constants/colors'
 import type { WeekSlot } from '../model'
 
 type MealComposerProps = {
@@ -22,23 +23,34 @@ const MealComposer = ({
       <div className="mb-2 flex flex-row gap-4">
         <button
           type="button"
-          className={`flex min-w-[160px] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold shadow-sm ${
-            quickMealType === 'lunch'
-              ? 'bg-gradient-to-r from-[#6eee87] to-[#5fc52e] text-white'
-              : 'bg-transparent text-gray-500'
-          }`}
+          className="flex min-w-[160px] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold shadow-sm text-gray-500"
           onClick={() => onQuickTypeChange('lunch')}
+          style={
+            quickMealType === 'lunch'
+              ? {
+                  color: 'white',
+                  backgroundImage: `linear-gradient(to right, ${APP_COLORS.lunchGradientStart}, ${APP_COLORS.lunchAccent})`,
+                }
+              : undefined
+          }
         >
           <span>Lunch</span>
         </button>
         <button
           type="button"
-          className={`flex min-w-[160px] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold shadow-sm ${
-            quickMealType === 'dinner'
-              ? 'border border-[#32c4c0] bg-gradient-to-r from-[#8de9d5] to-[#32c4c0] text-white'
-              : 'bg-transparent text-gray-500'
-          }`}
+          className="flex min-w-[160px] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold shadow-sm text-gray-500"
           onClick={() => onQuickTypeChange('dinner')}
+          style={
+            quickMealType === 'dinner'
+              ? {
+                  color: 'white',
+                  borderColor: APP_COLORS.dinnerAccent,
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  backgroundImage: `linear-gradient(to right, ${APP_COLORS.dinnerGradientStart}, ${APP_COLORS.dinnerAccent})`,
+                }
+              : undefined
+          }
         >
           <span>Dinner</span>
         </button>

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import type { Meal } from '../../../lib/utils/MealStorage'
 import type { WeekSlot } from '../model'
 import type { MealTheme } from '../theme'
@@ -10,9 +9,6 @@ type MobileMealQueueProps = {
   onTabChange: (slot: WeekSlot) => void
   onAssignMeal: (meal: Meal) => void
   onRandom: () => void
-  onEditMeal: (meal: Meal) => void
-  onDuplicateMeal: (meal: Meal) => void
-  onDelete: (mealId: string) => void
   theme: MealTheme
 }
 
@@ -28,15 +24,8 @@ const MobileMealQueue = ({
   onTabChange,
   onAssignMeal,
   onRandom,
-  onEditMeal,
-  onDuplicateMeal,
-  onDelete,
   theme,
 }: MobileMealQueueProps) => {
-  const [openMenuMealId, setOpenMenuMealId] = useState<string | null>(null)
-
-  const closeMenu = () => setOpenMenuMealId(null)
-
   return (
     <section
       className="space-y-4 rounded-3xl border p-3"
@@ -124,7 +113,7 @@ const MobileMealQueue = ({
       ) : null}
 
       <div
-        className="space-y-3 overflow-y-auto pr-1"
+        className="space-y-3 overflow-y-auto overflow-x-visible pr-1"
         style={{
           maxHeight: meals.length > 5 ? '328px' : 'none',
         }}
@@ -151,57 +140,10 @@ const MobileMealQueue = ({
                   backgroundColor: meal.type === 'lunch' ? theme.primary : theme.secondary,
                   color: '#ffffff',
                 }}
-                onClick={() => {
-                  closeMenu()
-                  onAssignMeal(meal)
-                }}
+                onClick={() => onAssignMeal(meal)}
               >
                 Assign
               </button>
-              <button
-                type="button"
-                className="px-2 text-xl leading-none transition-colors"
-                style={{ color: theme.mode === 'dark' ? '#ffffff' : '#94a3b8' }}
-                aria-label={`Open actions for ${meal.name}`}
-                onClick={() => setOpenMenuMealId((current) => (current === meal.id ? null : meal.id))}
-              >
-                {'\u22EE'}
-              </button>
-
-              {openMenuMealId === meal.id ? (
-                <div className="absolute right-3 top-14 z-10 w-40 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">
-                  <button
-                    type="button"
-                    className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-100"
-                    onClick={() => {
-                      closeMenu()
-                      onEditMeal(meal)
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-100"
-                    onClick={() => {
-                      closeMenu()
-                      onDuplicateMeal(meal)
-                    }}
-                  >
-                    Duplicate
-                  </button>
-                  <button
-                    type="button"
-                    className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50"
-                    onClick={() => {
-                      closeMenu()
-                      onDelete(meal.id)
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>
-              ) : null}
             </div>
           ))
         )}

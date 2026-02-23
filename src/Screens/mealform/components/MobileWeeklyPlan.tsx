@@ -1,11 +1,12 @@
-import { APP_COLORS } from '../../../lib/constants/colors'
 import { WEEK_DAYS, type WeekDay, type WeekSlot, type WeeklyPlan } from '../model'
+import type { MealTheme } from '../theme'
 
 type MobileWeeklyPlanProps = {
   weeklyPlan: WeeklyPlan
   mealNameById: Map<string, string>
   onAssignToSlot: (day: WeekDay, slot: WeekSlot) => void
   onClear: () => void
+  theme: MealTheme
 }
 
 const getWeekDateLabel = (dayIndex: number) => {
@@ -24,11 +25,12 @@ const MobileWeeklyPlan = ({
   mealNameById,
   onAssignToSlot,
   onClear,
+  theme,
 }: MobileWeeklyPlanProps) => (
-  <section className="space-y-4 rounded-3xl bg-white p-4 shadow-sm">
+  <section className="space-y-4 rounded-3xl border bg-white p-4 shadow-sm" style={{ borderColor: theme.border, backgroundColor: theme.surface, boxShadow: `0 10px 24px ${theme.shadow}` }}>
     <div className="flex items-center justify-between">
-      <h2 className="text-3xl font-bold text-slate-900">Weekly Plan</h2>
-      <button type="button" className="text-sm font-semibold text-slate-400" onClick={onClear}>
+      <h2 className="text-2xl font-bold" style={{ color: theme.textPrimary }}>Weekly Plan</h2>
+      <button type="button" className="text-sm font-semibold" style={{ color: theme.textSecondary }} onClick={onClear}>
         Clear Week
       </button>
     </div>
@@ -36,14 +38,18 @@ const MobileWeeklyPlan = ({
       {WEEK_DAYS.map((day, index) => (
         <div key={day} className="flex gap-3">
           <div className="w-16 pt-1">
-            <p className="text-xl font-bold text-slate-900">{day.slice(0, 3)}</p>
-            <p className="text-xs font-semibold text-slate-400">{getWeekDateLabel(index)}</p>
+            <p className="text-lg font-bold" style={{ color: theme.textPrimary }}>{day.slice(0, 3)}</p>
+            <p className="text-xs font-semibold" style={{ color: theme.textSecondary }}>{getWeekDateLabel(index)}</p>
           </div>
           <div className="flex-1 space-y-2">
             <button
               type="button"
-              className="w-full rounded-2xl border border-dashed bg-white px-4 py-3 text-left text-lg font-semibold text-slate-400"
-              style={{ borderColor: APP_COLORS.dropZoneBg }}
+              className="w-full rounded-2xl border border-dashed bg-white px-4 py-3 text-left text-base font-semibold transition-colors hover:bg-slate-50"
+              style={{
+                borderColor: weeklyPlan[day]?.lunch ? theme.primary : theme.border,
+                backgroundColor: weeklyPlan[day]?.lunch ? theme.primaryPastel : theme.surface,
+                color: weeklyPlan[day]?.lunch ? theme.textPrimary : theme.textSecondary,
+              }}
               onClick={() => onAssignToSlot(day, 'lunch')}
             >
               {weeklyPlan[day]?.lunch
@@ -52,8 +58,12 @@ const MobileWeeklyPlan = ({
             </button>
             <button
               type="button"
-              className="w-full rounded-2xl border border-dashed bg-white px-4 py-3 text-left text-lg font-semibold text-slate-400"
-              style={{ borderColor: APP_COLORS.dropZoneBg }}
+              className="w-full rounded-2xl border border-dashed bg-white px-4 py-3 text-left text-base font-semibold transition-colors hover:bg-slate-50"
+              style={{
+                borderColor: weeklyPlan[day]?.dinner ? theme.secondary : theme.border,
+                backgroundColor: weeklyPlan[day]?.dinner ? theme.secondaryPastel : theme.surface,
+                color: weeklyPlan[day]?.dinner ? theme.textPrimary : theme.textSecondary,
+              }}
               onClick={() => onAssignToSlot(day, 'dinner')}
             >
               {weeklyPlan[day]?.dinner

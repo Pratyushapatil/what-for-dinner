@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import MealComposer from './mealform/components/MealComposer'
 import MobileAssignSheet from './mealform/components/MobileAssignSheet'
-import MobileEditMealSheet from './mealform/components/MobileEditMealSheet'
 import MobileMealQueue from './mealform/components/MobileMealQueue'
 import MobileWeeklyPlan from './mealform/components/MobileWeeklyPlan'
 import MealListCard from './mealform/components/MealListCard'
@@ -31,8 +30,6 @@ const MealForm = () => {
     addMeal,
     handleSubmit,
     handleDelete,
-    duplicateMeal,
-    editMealName,
     handleMealDragStart,
     handleDragOverCell,
     handleDropInCell,
@@ -43,8 +40,6 @@ const MealForm = () => {
   const [assigningMeal, setAssigningMeal] = useState<Meal | null>(null)
   const [assignDay, setAssignDay] = useState<WeekDay>('Monday')
   const [assignType, setAssignType] = useState<WeekSlot>('lunch')
-  const [editingMeal, setEditingMeal] = useState<Meal | null>(null)
-  const [editingName, setEditingName] = useState('')
   const [suggestedMeal, setSuggestedMeal] = useState<Meal | null>(null)
   const [appearanceOpen, setAppearanceOpen] = useState(false)
   const [mode, setMode] = useState<ThemeMode>('light')
@@ -89,28 +84,6 @@ const MealForm = () => {
     setAssigningMeal(null)
   }
 
-  const handleEditMobileMeal = (meal: Meal) => {
-    setEditingMeal(meal)
-    setEditingName(meal.name)
-  }
-
-  const handleDuplicateMobileMeal = (meal: Meal) => {
-    duplicateMeal(meal.id)
-  }
-
-  const closeEditSheet = () => {
-    setEditingMeal(null)
-    setEditingName('')
-  }
-
-  const saveEditSheet = () => {
-    if (!editingMeal) {
-      return
-    }
-    editMealName(editingMeal.id, editingName)
-    closeEditSheet()
-  }
-
   const confirmAssignSheet = () => {
     if (!assigningMeal) {
       return
@@ -147,9 +120,6 @@ const MealForm = () => {
               onTabChange={setMobileTab}
               onAssignMeal={openAssignSheet}
               onRandom={handleRandomMobile}
-              onEditMeal={handleEditMobileMeal}
-              onDuplicateMeal={handleDuplicateMobileMeal}
-              onDelete={handleDelete}
               theme={theme}
             />
             <MobileWeeklyPlan
@@ -224,14 +194,6 @@ const MealForm = () => {
           onTypeChange={setAssignType}
           onCancel={closeAssignSheet}
           onAssign={confirmAssignSheet}
-          theme={theme}
-        />
-        <MobileEditMealSheet
-          meal={editingMeal}
-          value={editingName}
-          onChange={setEditingName}
-          onCancel={closeEditSheet}
-          onSave={saveEditSheet}
           theme={theme}
         />
         <ThemeSettingsPanel

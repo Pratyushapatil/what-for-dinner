@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { DragEvent, FormEvent } from 'react'
-import MealStorage, { type Meal } from '../../../lib/utils/MealStorage'
+import type { Meal } from '../../../lib/utils/MealStorage'
+import MealSupabaseStore from '../../../lib/utils/MealSupabaseStore'
 import {
   createEmptyWeeklyPlan,
   DRAG_MEAL_ID_KEY,
@@ -14,46 +15,66 @@ import {
 const useMealPlannerState = () => {
   const [mealName, setMealName] = useState('')
   const [quickMealType, setQuickMealType] = useState<WeekSlot>('lunch')
-  const [meals, setMeals] = useState<Meal[]>(() => MealStorage.load())
+  const [meals, setMeals] = useState<Meal[]>([])
   const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan>(createEmptyWeeklyPlan)
 
-  const addMeal = useCallback((type: WeekSlot) => {
+  useEffect(() => {
+    let active = true
+
+    const loadInitialData = async () => {
+      try {
+        const [loadedMeals, loadedPlan] = await Promise.all([
+          MealSupabaseStore.loadMeals(),
+          MealSupabaseStore.loadWeeklyPlan(),
+        ])
+
+        if (!active) {
+          return
+        }
+
+        setMeals(loadedMeals)
+        setWeeklyPlan(loadedPlan)
+      } catch (error) {
+        console.error('Failed to load meal planner data from Supabase', error)
+      }
+    }
+
+    loadInitialData()
+
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const addMeal = useCallback(async (type: WeekSlot) => {
     const trimmedName = mealName.trim()
 
     if (!trimmedName) {
       return
     }
 
-    setMeals((currentMeals) => {
-      const nextMeals = [
-        ...currentMeals,
-        {
-          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          name: trimmedName,
-          type,
-        },
-      ]
-      MealStorage.save(nextMeals)
-      return nextMeals
-    })
-    setMealName('')
+    try {
+      const createdMeal = await MealSupabaseStore.addMeal(trimmedName, type)
+      setMeals((currentMeals) => [...currentMeals, createdMeal])
+      setMealName('')
+    } catch (error) {
+      console.error('Failed to add meal', error)
+    }
   }, [mealName])
 
   const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    addMeal(quickMealType)
+    void addMeal(quickMealType)
   }, [addMeal, quickMealType])
 
-  const handleDelete = useCallback((mealId: string) => {
-    setMeals((currentMeals) => {
-      const nextMeals = currentMeals.filter((meal) => meal.id !== mealId)
-      MealStorage.save(nextMeals)
-      return nextMeals
-    })
+  const handleDelete = useCallback(async (mealId: string) => {
+    const currentMeals = meals
+    const currentPlan = weeklyPlan
 
-    setWeeklyPlan((currentPlan) =>
+    setMeals((existingMeals) => existingMeals.filter((meal) => meal.id !== mealId))
+    setWeeklyPlan((existingPlan) =>
       WEEK_DAYS.reduce((acc, day) => {
-        const dayPlan = currentPlan[day] ?? {}
+        const dayPlan = existingPlan[day] ?? {}
         acc[day] = {
           lunch: dayPlan.lunch === mealId ? undefined : dayPlan.lunch,
           dinner: dayPlan.dinner === mealId ? undefined : dayPlan.dinner,
@@ -61,42 +82,50 @@ const useMealPlannerState = () => {
         return acc
       }, {} as WeeklyPlan),
     )
-  }, [])
 
-  const duplicateMeal = useCallback((mealId: string) => {
-    setMeals((currentMeals) => {
-      const sourceMeal = currentMeals.find((meal) => meal.id === mealId)
-      if (!sourceMeal) {
-        return currentMeals
-      }
+    try {
+      await MealSupabaseStore.deleteMeal(mealId)
+    } catch (error) {
+      console.error('Failed to delete meal', error)
+      setMeals(currentMeals)
+      setWeeklyPlan(currentPlan)
+    }
+  }, [meals, weeklyPlan])
 
-      const nextMeals = [
-        {
-          ...sourceMeal,
-          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          name: `${sourceMeal.name} (Copy)`,
-        },
-        ...currentMeals,
-      ]
-      MealStorage.save(nextMeals)
-      return nextMeals
-    })
-  }, [])
+  const duplicateMeal = useCallback(async (mealId: string) => {
+    const sourceMeal = meals.find((meal) => meal.id === mealId)
+    if (!sourceMeal) {
+      return
+    }
 
-  const editMealName = useCallback((mealId: string, nextName: string) => {
+    try {
+      const copiedMeal = await MealSupabaseStore.addMeal(`${sourceMeal.name} (Copy)`, sourceMeal.type)
+      setMeals((currentMeals) => [copiedMeal, ...currentMeals])
+    } catch (error) {
+      console.error('Failed to duplicate meal', error)
+    }
+  }, [meals])
+
+  const editMealName = useCallback(async (mealId: string, nextName: string) => {
     const trimmedName = nextName.trim()
     if (!trimmedName) {
       return
     }
 
-    setMeals((currentMeals) => {
-      const nextMeals = currentMeals.map((meal) =>
+    const currentMeals = meals
+    setMeals((existingMeals) =>
+      existingMeals.map((meal) =>
         meal.id === mealId ? { ...meal, name: trimmedName } : meal,
-      )
-      MealStorage.save(nextMeals)
-      return nextMeals
-    })
-  }, [])
+      ),
+    )
+
+    try {
+      await MealSupabaseStore.updateMealName(mealId, trimmedName)
+    } catch (error) {
+      console.error('Failed to update meal name', error)
+      setMeals(currentMeals)
+    }
+  }, [meals])
 
   const { lunchMeals, dinnerMeals, mealNameById, mealTypeById } = useMemo(() => {
     const lunch: Meal[] = []
@@ -158,6 +187,9 @@ const useMealPlannerState = () => {
         [slot]: mealId,
       },
     }))
+    void MealSupabaseStore.assignMealToSlot(day, slot, mealId).catch((error) => {
+      console.error('Failed to assign meal on drop', error)
+    })
   }, [mealTypeById])
 
   const assignMealToSlot = useCallback((day: WeekDay, slot: WeekSlot, mealId: string) => {
@@ -173,10 +205,16 @@ const useMealPlannerState = () => {
         [slot]: mealId,
       },
     }))
+    void MealSupabaseStore.assignMealToSlot(day, slot, mealId).catch((error) => {
+      console.error('Failed to assign meal', error)
+    })
   }, [mealTypeById])
 
   const handleClearPlan = useCallback(() => {
     setWeeklyPlan(createEmptyWeeklyPlan())
+    void MealSupabaseStore.clearPlan().catch((error) => {
+      console.error('Failed to clear plan', error)
+    })
   }, [])
 
   return {

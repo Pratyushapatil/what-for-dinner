@@ -25,7 +25,7 @@ const PlannerHeader = ({ theme, onOpenAppearance }: PlannerHeaderProps) => {
         <div className="md:hidden">
           <div className="flex items-center justify-between px-8">
             <p className="text-xl font-semibold" style={{ color: theme.textPrimary }}>
-              Meal Planner
+              Weekly Meal Planner
             </p>
             <button
               type="button"
@@ -105,12 +105,6 @@ const PlannerHeader = ({ theme, onOpenAppearance }: PlannerHeaderProps) => {
       </div>
 
       <div className="mb-4 px-1">
-        <h1
-          className="text-2xl font-bold leading-tight md:text-5xl"
-          style={{ color: theme.textPrimary }}
-        >
-          Weekly Meal Planner
-        </h1>
         <p
           className="mt-2 text-base leading-relaxed md:text-3xl"
           style={{ color: theme.textSecondary }}

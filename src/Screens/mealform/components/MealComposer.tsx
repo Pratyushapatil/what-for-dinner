@@ -1,6 +1,6 @@
 import AddButton from '../../../lib/components/AddButton'
-import { APP_COLORS } from '../../../lib/constants/colors'
 import type { WeekSlot } from '../model'
+import type { MealTheme } from '../theme'
 
 type MealComposerProps = {
   mealName: string
@@ -8,6 +8,7 @@ type MealComposerProps = {
   onMealNameChange: (value: string) => void
   onQuickTypeChange: (slot: WeekSlot) => void
   onAdd: (slot: WeekSlot) => void
+  theme: MealTheme
 }
 
 const MealComposer = ({
@@ -16,47 +17,61 @@ const MealComposer = ({
   onMealNameChange,
   onQuickTypeChange,
   onAdd,
+  theme,
 }: MealComposerProps) => (
   <div className="mt-4 flex flex-row gap-4">
     <div
-      className="mb-2 w-full space-y-4 rounded-3xl border bg-white px-4 py-4 shadow-sm md:basis-1/2"
-      style={{ borderColor: APP_COLORS.dropZoneBg }}
+      className="mb-1 w-full space-y-4 rounded-3xl border bg-white px-4 py-4 md:basis-1/2 md:px-5 md:py-5"
+      style={{
+        borderColor: theme.border,
+        backgroundColor: theme.surface,
+        boxShadow: `0 10px 24px ${theme.shadow}`,
+      }}
     >
-      <div className="grid grid-cols-2 rounded-2xl bg-slate-200 p-1">
+      <h2 className="text-xl font-semibold" style={{ color: theme.textPrimary }}>
+        Add New Meal
+      </h2>
+      <div
+        className="grid grid-cols-2 rounded-2xl p-1"
+        style={{ backgroundColor: theme.surfaceMuted }}
+      >
         <button
           type="button"
-          className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-lg font-semibold text-slate-500"
+          className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-base font-medium transition-all duration-150"
           onClick={() => onQuickTypeChange('lunch')}
           style={
             quickMealType === 'lunch'
               ? {
-                  color: APP_COLORS.lunchAccent,
-                  backgroundColor: 'white',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.12)',
+                  color: '#ffffff',
+                  backgroundColor: theme.primary,
+                  boxShadow: `0 6px 14px ${theme.primarySoft}`,
                 }
-              : undefined
+              : { color: theme.textSecondary }
           }
         >
           <span>Lunch</span>
         </button>
         <button
           type="button"
-          className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-lg font-semibold text-slate-500"
+          className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-base font-medium transition-all duration-150"
           onClick={() => onQuickTypeChange('dinner')}
           style={
             quickMealType === 'dinner'
               ? {
-                  color: APP_COLORS.dinnerAccent,
-                  backgroundColor: 'white',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.12)',
+                  color: '#ffffff',
+                  backgroundColor: theme.secondary,
+                  boxShadow: `0 6px 14px ${theme.secondarySoft}`,
                 }
-              : undefined
+              : { color: theme.textSecondary }
           }
         >
           <span>Dinner</span>
         </button>
       </div>
-      <div className="flex items-center gap-3 rounded-2xl border border-slate-300 bg-slate-100 px-3 py-2">
+      <div
+        className="flex items-center gap-2 rounded-2xl border px-3 py-2"
+        style={{ borderColor: theme.border, backgroundColor: theme.surfaceMuted }}
+      >
         <label htmlFor="meal-name" className="sr-only">
           Meal name
         </label>
@@ -64,19 +79,40 @@ const MealComposer = ({
           id="meal-name"
           name="mealName"
           type="text"
+          autoComplete="off"
           value={mealName}
           onChange={(event) => onMealNameChange(event.target.value)}
-          placeholder="e.g. Paneer wrap"
-          className="flex-1 bg-transparent text-lg text-slate-700 outline-none placeholder:text-slate-400"
+          placeholder="Enter meal name..."
+          className="flex-1 bg-transparent text-base outline-none md:text-lg"
+          style={{
+            color: theme.textPrimary,
+            backgroundColor: 'transparent',
+            WebkitTextFillColor: theme.textPrimary,
+            caretColor: theme.textPrimary,
+            colorScheme: theme.mode,
+          }}
         />
 
         <AddButton
           aria-label={`Add ${quickMealType} meal`}
-          className="h-11 w-12 rounded-xl"
-          style={{ backgroundColor: APP_COLORS.mealHeaderTitleStart, color: 'white' }}
+          className="h-11 w-11 rounded-xl transition-transform duration-150 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2"
+          style={{
+            backgroundColor: quickMealType === 'lunch' ? theme.primary : theme.secondary,
+            color: '#ffffff',
+            boxShadow: `0 6px 14px ${quickMealType === 'lunch' ? theme.primarySoft : theme.secondarySoft}`,
+          }}
           onClick={() => onAdd(quickMealType)}
         >
-          +
+          <svg
+            viewBox="0 0 24 24"
+            className="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          >
+            <path d="M12 5v14M5 12h14" />
+          </svg>
         </AddButton>
       </div>
     </div>

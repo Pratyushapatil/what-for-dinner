@@ -162,7 +162,7 @@ const useMealPlannerState = () => {
 
   const assignMealToSlot = useCallback((day: WeekDay, slot: WeekSlot, mealId: string) => {
     const mealType = mealTypeById.get(mealId)
-    if (mealType !== slot) {
+    if (mealType && mealType !== slot) {
       return
     }
 

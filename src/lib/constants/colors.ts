@@ -1,23 +1,32 @@
 export const APP_COLORS = {
-  pageBackground: '#f4fafa',
-  neutralHint: '#888',
+  pageBackground: '#f5f5f7',
+  neutralHint: '#8e8e93',
+  surface: '#ffffff',
+  surfaceMuted: '#f2f2f7',
+  cardBorder: '#e5e5ea',
+  textPrimary: '#1d1d1f',
+  textSecondary: '#6e6e73',
+  actionDark: '#1d1d1f',
+  accent: '#0a84ff',
+  accentSoft: '#e8f3ff',
+  shadowColor: 'rgba(17, 24, 39, 0.08)',
 
-  mealHeaderBg: '#2563eb',
-  mealHeaderTitleStart: '#1e3a8a',
-  mealHeaderTitleEnd: '#0ea5e9',
+  mealHeaderBg: '#0a84ff',
+  mealHeaderTitleStart: '#1d1d1f',
+  mealHeaderTitleEnd: '#3a3a3c',
 
-  lunchGradientStart: '#60a5fa',
-  lunchAccent: '#2563eb',
-  lunchSoftBg: '#eff6ff',
-  lunchBadgeBg: '#bfdbfe',
+  lunchGradientStart: '#5aa9ff',
+  lunchAccent: '#0a84ff',
+  lunchSoftBg: '#f0f7ff',
+  lunchBadgeBg: '#dbeaff',
 
-  dinnerAccent: '#0284c7',
-  dinnerGradientStart: '#38bdf8',
-  dinnerBorder: '#38bdf8',
-  dinnerSoftBg: '#e0f2fe',
-  dinnerSoftCardBg: '#dbeafe',
+  dinnerAccent: '#5e5ce6',
+  dinnerGradientStart: '#8f8dff',
+  dinnerBorder: '#d8d8ff',
+  dinnerSoftBg: '#f2f2ff',
+  dinnerSoftCardBg: '#ececff',
 
-  dropZoneBg: '#e2e8f0',
+  dropZoneBg: '#f2f2f7',
 } as const
 
 export const LOGO_COLORS = {

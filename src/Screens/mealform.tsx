@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import MealComposer from './mealform/components/MealComposer'
 import MobileAssignSheet from './mealform/components/MobileAssignSheet'
+import MobileEditMealSheet from './mealform/components/MobileEditMealSheet'
 import MobileMealQueue from './mealform/components/MobileMealQueue'
 import MobileWeeklyPlan from './mealform/components/MobileWeeklyPlan'
 import MealListCard from './mealform/components/MealListCard'
@@ -30,6 +31,7 @@ const MealForm = () => {
     addMeal,
     handleSubmit,
     handleDelete,
+    editMealName,
     handleMealDragStart,
     handleDragOverCell,
     handleDropInCell,
@@ -41,6 +43,8 @@ const MealForm = () => {
   const [assignDay, setAssignDay] = useState<WeekDay>('Monday')
   const [assignType, setAssignType] = useState<WeekSlot>('lunch')
   const [suggestedMeal, setSuggestedMeal] = useState<Meal | null>(null)
+  const [editingMeal, setEditingMeal] = useState<Meal | null>(null)
+  const [editingMealName, setEditingMealName] = useState('')
   const [appearanceOpen, setAppearanceOpen] = useState(false)
   const [mode, setMode] = useState<ThemeMode>('light')
   const [presetId, setPresetId] = useState<ThemePresetId>('classic')
@@ -78,6 +82,41 @@ const MealForm = () => {
   const openAssignSheet = (meal: Meal) => {
     setAssigningMeal(meal)
     setAssignType(meal.type)
+  }
+
+  const openEditSheet = (meal: Meal) => {
+    setEditingMeal(meal)
+    setEditingMealName(meal.name)
+  }
+
+  const closeEditSheet = () => {
+    setEditingMeal(null)
+    setEditingMealName('')
+  }
+
+  const saveEditSheet = () => {
+    if (!editingMeal) {
+      return
+    }
+    const trimmedName = editingMealName.trim()
+    if (!trimmedName) {
+      return
+    }
+    void editMealName(editingMeal.id, trimmedName)
+    setAssigningMeal((current) =>
+      current?.id === editingMeal.id ? { ...current, name: trimmedName } : current,
+    )
+    setSuggestedMeal((current) =>
+      current?.id === editingMeal.id ? { ...current, name: trimmedName } : current,
+    )
+    closeEditSheet()
+  }
+
+  const handleDeleteMobileMeal = (mealId: string) => {
+    handleDelete(mealId)
+    setAssigningMeal((current) => (current?.id === mealId ? null : current))
+    setSuggestedMeal((current) => (current?.id === mealId ? null : current))
+    setEditingMeal((current) => (current?.id === mealId ? null : current))
   }
 
   const closeAssignSheet = () => {
@@ -119,6 +158,8 @@ const MealForm = () => {
               suggestedMeal={suggestedMeal}
               onTabChange={setMobileTab}
               onAssignMeal={openAssignSheet}
+              onEditMeal={openEditSheet}
+              onDeleteMeal={handleDeleteMobileMeal}
               onRandom={handleRandomMobile}
               theme={theme}
             />
@@ -194,6 +235,14 @@ const MealForm = () => {
           onTypeChange={setAssignType}
           onCancel={closeAssignSheet}
           onAssign={confirmAssignSheet}
+          theme={theme}
+        />
+        <MobileEditMealSheet
+          meal={editingMeal}
+          value={editingMealName}
+          onChange={setEditingMealName}
+          onCancel={closeEditSheet}
+          onSave={saveEditSheet}
           theme={theme}
         />
         <ThemeSettingsPanel

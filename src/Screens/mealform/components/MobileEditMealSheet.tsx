@@ -63,7 +63,7 @@ const MobileEditMealSheet = ({
             <button
               type="button"
               className="flex-1 rounded-2xl px-4 py-3 text-base font-semibold text-white"
-              style={{ backgroundColor: theme.primary }}
+              style={{ backgroundColor: meal.type === 'lunch' ? theme.primary : theme.secondary }}
               onClick={onSave}
             >
               Save Changes

@@ -175,6 +175,8 @@ const MealForm = () => {
                 handleAssignMobileSlot(day, slot)
                 closeAssignSheet()
               }}
+              onEditMeal={openEditSheet}
+              onDeleteMeal={handleDeleteMobileMeal}
               onClear={handleClearPlan}
               theme={theme}
             />
@@ -222,6 +224,8 @@ const MealForm = () => {
               mealNameById={mealNameById}
               onDragOver={handleDragOverCell}
               onDrop={handleDropInCell}
+              onEditMeal={openEditSheet}
+              onDeleteMeal={handleDeleteMobileMeal}
               onClear={handleClearPlan}
               theme={theme}
             />

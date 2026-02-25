@@ -11,12 +11,7 @@ import WeeklyPlanTable from './mealform/components/WeeklyPlanTable'
 import useMealPlannerState from './mealform/hooks/useMealPlannerState'
 import type { WeekDay, WeekSlot } from './mealform/model'
 import type { Meal } from '../lib/utils/MealStorage'
-import {
-  buildMealTheme,
-  THEME_PRESETS,
-  type ThemeMode,
-  type ThemePresetId,
-} from './mealform/theme'
+import { buildMealTheme, THEME_PRESETS, type ThemeMode, type ThemePresetId } from './mealform/theme'
 
 const MealForm = () => {
   const {
@@ -136,10 +131,7 @@ const MealForm = () => {
       className="min-h-screen px-3 py-4 text-black sm:px-4 md:px-0"
       style={{ backgroundColor: theme.pageBackground }}
     >
-      <div
-        className="mx-auto max-w-5xl rounded-[32px] border p-3 md:rounded-3xl md:p-4"
-        style={{ borderColor: theme.border, backgroundColor: theme.surfaceMuted }}
-      >
+      <div className="mx-auto max-w-8xl rounded-[32px]  p-3 md:rounded-3xl md:p-4">
         <PlannerHeader theme={theme} onOpenAppearance={() => setAppearanceOpen(true)} />
         <form onSubmit={handleSubmit}>
           <MealComposer
@@ -195,7 +187,11 @@ const MealForm = () => {
                 boxShadow: `0 10px 24px ${theme.shadow}`,
               }}
               itemClassName="flex cursor-grab items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold active:cursor-grabbing"
-              itemStyle={{ borderColor: theme.primary, backgroundColor: theme.surface, color: theme.textPrimary }}
+              itemStyle={{
+                borderColor: theme.primary,
+                backgroundColor: theme.surface,
+                color: theme.textPrimary,
+              }}
               slot="lunch"
               onDragStart={handleMealDragStart}
               onDelete={handleDelete}
@@ -213,7 +209,11 @@ const MealForm = () => {
                 boxShadow: `0 10px 24px ${theme.shadow}`,
               }}
               itemClassName="flex cursor-grab items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold active:cursor-grabbing"
-              itemStyle={{ borderColor: theme.secondary, backgroundColor: theme.surface, color: theme.textPrimary }}
+              itemStyle={{
+                borderColor: theme.secondary,
+                backgroundColor: theme.surface,
+                color: theme.textPrimary,
+              }}
               slot="dinner"
               onDragStart={handleMealDragStart}
               onDelete={handleDelete}

@@ -4,10 +4,22 @@ import type { MealTheme } from '../theme'
 type PlannerHeaderProps = {
   theme: MealTheme
   onOpenAppearance: () => void
+  onGoHome?: () => void
+  onGoRecipes?: () => void
 }
 
-const PlannerHeader = ({ theme, onOpenAppearance }: PlannerHeaderProps) => {
+const PlannerHeader = ({ 
+  theme, 
+  onOpenAppearance,
+  onGoHome,
+  onGoRecipes
+}: PlannerHeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false)
+
+  const handleNav = (callback?: () => void) => {
+    setMenuOpen(false)
+    callback?.()
+  }
 
   return (
     <header
@@ -49,27 +61,26 @@ const PlannerHeader = ({ theme, onOpenAppearance }: PlannerHeaderProps) => {
             >
               <button
                 type="button"
-                className="px-3 py-2 text-left text-sm font-semibold"
-                style={{ backgroundColor: theme.surfaceMuted, color: theme.textPrimary }}
-                onClick={() => setMenuOpen(false)}
+                className="px-3 py-2 text-left text-sm font-semibold hover:bg-slate-50 transition-colors"
+                style={{ color: theme.textPrimary }}
+                onClick={() => handleNav(onGoHome)}
               >
                 Home
               </button>
               <button
                 type="button"
-                className="px-3 py-2 text-left text-sm font-medium"
+                className="px-3 py-2 text-left text-sm font-medium hover:bg-slate-50 transition-colors"
                 style={{ color: theme.textSecondary }}
-                onClick={() => setMenuOpen(false)}
+                onClick={() => handleNav(onGoRecipes)}
               >
-                Meals List
+                Recipes
               </button>
               <button
                 type="button"
-                className="px-3 py-2 text-left text-sm font-medium"
+                className="px-3 py-2 text-left text-sm font-medium hover:bg-slate-50 transition-colors"
                 style={{ color: theme.textSecondary }}
                 onClick={() => {
-                  setMenuOpen(false)
-                  onOpenAppearance()
+                  handleNav(onOpenAppearance)
                 }}
               >
                 Themes
@@ -81,21 +92,23 @@ const PlannerHeader = ({ theme, onOpenAppearance }: PlannerHeaderProps) => {
         <div className="hidden items-center gap-2 md:flex">
           <button
             type="button"
-            className="flex min-w-[64px] items-center justify-center rounded-xl px-3 py-2 text-sm font-semibold"
-            style={{ backgroundColor: theme.surfaceMuted, color: theme.textPrimary }}
+            className="flex min-w-[64px] items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold hover:bg-slate-50 transition-colors"
+            style={{ color: theme.textPrimary }}
+            onClick={onGoHome}
           >
             Home
           </button>
           <button
             type="button"
-            className="flex min-w-[64px] items-center justify-center rounded-xl px-3 py-2 text-sm font-medium"
+            className="flex min-w-[64px] items-center justify-center rounded-xl px-4 py-2 text-sm font-medium hover:bg-slate-50 transition-colors"
             style={{ color: theme.textSecondary }}
+            onClick={onGoRecipes}
           >
-            Meals List
+            Recipes
           </button>
           <button
             type="button"
-            className="flex min-w-[64px] items-center justify-center rounded-xl px-3 py-2 text-sm font-medium"
+            className="flex min-w-[64px] items-center justify-center rounded-xl px-4 py-2 text-sm font-medium hover:bg-slate-50 transition-colors"
             style={{ color: theme.textSecondary }}
             onClick={onOpenAppearance}
           >

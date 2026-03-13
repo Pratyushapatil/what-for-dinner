@@ -6,6 +6,7 @@ import MobileMealQueue from './mealform/components/MobileMealQueue'
 import MobileWeeklyPlan from './mealform/components/MobileWeeklyPlan'
 import MealListCard from './mealform/components/MealListCard'
 import PlannerHeader from './mealform/components/PlannerHeader'
+import RecipeViewModal from './mealform/components/RecipeViewModal'
 import ThemeSettingsPanel from './mealform/components/ThemeSettingsPanel'
 import WeeklyPlanTable from './mealform/components/WeeklyPlanTable'
 import useMealPlannerState from './mealform/hooks/useMealPlannerState'
@@ -13,7 +14,11 @@ import type { WeekDay, WeekSlot } from './mealform/model'
 import type { Meal } from '../lib/utils/MealStorage'
 import { buildMealTheme, THEME_PRESETS, type ThemeMode, type ThemePresetId } from './mealform/theme'
 
-const MealForm = () => {
+type MealFormProps = {
+  onNavigate: (screen: 'planner' | 'recipes') => void
+}
+
+const MealForm = ({ onNavigate }: MealFormProps) => {
   const {
     mealName,
     setMealName,
@@ -22,6 +27,7 @@ const MealForm = () => {
     lunchMeals,
     dinnerMeals,
     mealNameById,
+    mealById,
     weeklyPlan,
     addMeal,
     handleSubmit,
@@ -31,6 +37,7 @@ const MealForm = () => {
     handleDragOverCell,
     handleDropInCell,
     assignMealToSlot,
+    unassignFromSlot,
     handleClearPlan,
   } = useMealPlannerState()
   const [mobileTab, setMobileTab] = useState<WeekSlot>('lunch')
@@ -41,6 +48,7 @@ const MealForm = () => {
   const [editingMeal, setEditingMeal] = useState<Meal | null>(null)
   const [editingMealName, setEditingMealName] = useState('')
   const [appearanceOpen, setAppearanceOpen] = useState(false)
+  const [viewingRecipe, setViewingRecipe] = useState<Meal | null>(null)
   const [mode, setMode] = useState<ThemeMode>('light')
   const [presetId, setPresetId] = useState<ThemePresetId>('classic')
   const selectedPreset = THEME_PRESETS.find((preset) => preset.id === presetId) ?? THEME_PRESETS[0]
@@ -132,7 +140,12 @@ const MealForm = () => {
       style={{ backgroundColor: theme.pageBackground }}
     >
       <div className="mx-auto max-w-8xl rounded-[32px]  p-3 md:rounded-3xl md:p-4">
-        <PlannerHeader theme={theme} onOpenAppearance={() => setAppearanceOpen(true)} />
+        <PlannerHeader 
+          theme={theme} 
+          onOpenAppearance={() => setAppearanceOpen(true)} 
+          onGoHome={() => onNavigate('planner')}
+          onGoRecipes={() => onNavigate('recipes')}
+        />
         <form onSubmit={handleSubmit}>
           <MealComposer
             mealName={mealName}
@@ -168,13 +181,17 @@ const MealForm = () => {
                 closeAssignSheet()
               }}
               onEditMeal={openEditSheet}
-              onDeleteMeal={handleDeleteMobileMeal}
+              onViewMeal={(meal) => {
+                const fullMeal = mealById.get(meal.id)
+                if (fullMeal) setViewingRecipe(fullMeal)
+              }}
+              onUnassignFromSlot={unassignFromSlot}
               onClear={handleClearPlan}
               theme={theme}
             />
           </div>
 
-          <div className="mt-8 hidden flex-col gap-4 md:flex md:flex-row">
+          <div className="mt-8 hidden flex-col gap-4 md:flex md:flex-row" id="meals-list">
             <MealListCard
               title="Lunch Options"
               emptyMessage="No lunch meals yet."
@@ -194,6 +211,7 @@ const MealForm = () => {
               }}
               slot="lunch"
               onDragStart={handleMealDragStart}
+              onView={setViewingRecipe}
               onDelete={handleDelete}
               theme={theme}
             />
@@ -216,6 +234,7 @@ const MealForm = () => {
               }}
               slot="dinner"
               onDragStart={handleMealDragStart}
+              onView={setViewingRecipe}
               onDelete={handleDelete}
               theme={theme}
             />
@@ -225,7 +244,11 @@ const MealForm = () => {
               onDragOver={handleDragOverCell}
               onDrop={handleDropInCell}
               onEditMeal={openEditSheet}
-              onDeleteMeal={handleDeleteMobileMeal}
+              onViewMeal={(meal) => {
+                const fullMeal = mealById.get(meal.id)
+                if (fullMeal) setViewingRecipe(fullMeal)
+              }}
+              onUnassignFromSlot={unassignFromSlot}
               onClear={handleClearPlan}
               theme={theme}
             />
@@ -264,6 +287,11 @@ const MealForm = () => {
             setPrimaryColor(primary)
             setSecondaryColor(secondary)
           }}
+        />
+        <RecipeViewModal
+          recipe={viewingRecipe}
+          onClose={() => setViewingRecipe(null)}
+          theme={theme}
         />
       </div>
     </div>

@@ -9,7 +9,8 @@ type WeeklyPlanTableProps = {
   onDragOver: (event: DragEvent<HTMLDivElement>) => void
   onDrop: (event: DragEvent<HTMLDivElement>, day: WeekDay, slot: WeekSlot) => void
   onEditMeal: (meal: Meal) => void
-  onDeleteMeal: (mealId: string) => void
+  onViewMeal: (meal: Meal) => void
+  onUnassignFromSlot: (day: WeekDay, slot: WeekSlot) => void
   onClear: () => void
   theme: MealTheme
 }
@@ -20,7 +21,8 @@ const WeeklyPlanTable = ({
   onDragOver,
   onDrop,
   onEditMeal,
-  onDeleteMeal,
+  onViewMeal,
+  onUnassignFromSlot,
   onClear,
   theme,
 }: WeeklyPlanTableProps) => (
@@ -103,10 +105,28 @@ const WeeklyPlanTable = ({
                   </button>
                   <button
                     type="button"
+                    title="View Recipe"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors duration-150 hover:bg-slate-100"
+                    style={{ color: theme.textSecondary }}
+                    onClick={() => {
+                      const mealId = weeklyPlan[day]?.lunch
+                      const mealName = mealNameById.get(mealId ?? '')
+                      if (mealId && mealName) {
+                        onViewMeal({ id: mealId, name: mealName, type: 'lunch' })
+                      }
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
                     aria-label={`Delete ${mealNameById.get(weeklyPlan[day]?.lunch ?? '') ?? 'meal'}`}
                     className="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors duration-150 hover:bg-red-50"
                     style={{ color: '#dc2626' }}
-                    onClick={() => onDeleteMeal(weeklyPlan[day]?.lunch ?? '')}
+                    onClick={() => onUnassignFromSlot(day, 'lunch')}
                   >
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <polyline points="3 6 5 6 21 6" />
@@ -162,10 +182,28 @@ const WeeklyPlanTable = ({
                   </button>
                   <button
                     type="button"
+                    title="View Recipe"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors duration-150 hover:bg-slate-100"
+                    style={{ color: theme.textSecondary }}
+                    onClick={() => {
+                      const mealId = weeklyPlan[day]?.dinner
+                      const mealName = mealNameById.get(mealId ?? '')
+                      if (mealId && mealName) {
+                        onViewMeal({ id: mealId, name: mealName, type: 'dinner' })
+                      }
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
                     aria-label={`Delete ${mealNameById.get(weeklyPlan[day]?.dinner ?? '') ?? 'meal'}`}
                     className="inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors duration-150 hover:bg-red-50"
                     style={{ color: '#dc2626' }}
-                    onClick={() => onDeleteMeal(weeklyPlan[day]?.dinner ?? '')}
+                    onClick={() => onUnassignFromSlot(day, 'dinner')}
                   >
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <polyline points="3 6 5 6 21 6" />

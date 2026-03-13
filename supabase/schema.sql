@@ -4,6 +4,8 @@ create table if not exists public.meals (
   id uuid primary key default gen_random_uuid(),
   name text not null check (char_length(trim(name)) > 0),
   type text not null check (type in ('lunch', 'dinner')),
+  ingredients text,
+  instructions text,
   created_at timestamptz not null default now()
 );
 

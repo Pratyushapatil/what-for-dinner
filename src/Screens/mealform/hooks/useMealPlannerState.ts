@@ -62,6 +62,28 @@ const useMealPlannerState = () => {
     }
   }, [mealName])
 
+  const addRecipe = useCallback(
+    async (name: string, type: WeekSlot, ingredients: string, instructions: string) => {
+      const trimmedName = name.trim()
+      if (!trimmedName) {
+        return
+      }
+
+      try {
+        const createdMeal = await MealSupabaseStore.addMeal(
+          trimmedName,
+          type,
+          ingredients,
+          instructions,
+        )
+        setMeals((currentMeals) => [...currentMeals, createdMeal])
+      } catch (error) {
+        console.error('Failed to add recipe', error)
+      }
+    },
+    [],
+  )
+
   const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     void addMeal(quickMealType)
@@ -127,7 +149,7 @@ const useMealPlannerState = () => {
     }
   }, [meals])
 
-  const { lunchMeals, dinnerMeals, mealNameById, mealTypeById } = useMemo(() => {
+  const { lunchMeals, dinnerMeals, mealNameById, mealTypeById, mealById } = useMemo(() => {
     const lunch: Meal[] = []
     const dinner: Meal[] = []
     const nameById = new Map<string, string>()
@@ -148,6 +170,7 @@ const useMealPlannerState = () => {
       dinnerMeals: dinner,
       mealNameById: nameById,
       mealTypeById: typeById,
+      mealById: new Map(meals.map((m) => [m.id, m])),
     }
   }, [meals])
 
@@ -217,6 +240,19 @@ const useMealPlannerState = () => {
     })
   }, [])
 
+  const unassignFromSlot = useCallback((day: WeekDay, slot: WeekSlot) => {
+    setWeeklyPlan((currentPlan) => ({
+      ...currentPlan,
+      [day]: {
+        ...currentPlan[day],
+        [slot]: undefined,
+      },
+    }))
+    void MealSupabaseStore.unassignMealFromSlot(day, slot).catch((error) => {
+      console.error('Failed to unassign meal', error)
+    })
+  }, [])
+
   return {
     mealName,
     setMealName,
@@ -225,8 +261,10 @@ const useMealPlannerState = () => {
     lunchMeals,
     dinnerMeals,
     mealNameById,
+    mealById,
     weeklyPlan,
     addMeal,
+    addRecipe,
     handleSubmit,
     handleDelete,
     duplicateMeal,
@@ -235,6 +273,7 @@ const useMealPlannerState = () => {
     handleDragOverCell,
     handleDropInCell,
     assignMealToSlot,
+    unassignFromSlot,
     handleClearPlan,
   }
 }

@@ -17,6 +17,7 @@ type MealListCardProps = {
   slot: WeekSlot
   onDragStart: (event: DragEvent<HTMLDivElement>, mealId: string, slot: WeekSlot) => void
   onDelete: (mealId: string) => void
+  onView?: (meal: Meal) => void
   theme: MealTheme
 }
 
@@ -33,6 +34,7 @@ const MealListCard = ({
   slot,
   onDragStart,
   onDelete,
+  onView,
   theme,
 }: MealListCardProps) => (
   <div className={wrapperClassName} style={wrapperStyle}>
@@ -61,7 +63,23 @@ const MealListCard = ({
             className={`${itemClassName} transition-all duration-150 hover:shadow-sm`}
             style={itemStyle}
           >
-            <span>{meal.name}</span>
+            <span className="flex-1">{meal.name}</span>
+            {onView && (
+              <button
+                type="button"
+                className="inline-flex h-6 w-6 items-center justify-center rounded-md hover:bg-black/5"
+                style={{ color: theme.textSecondary }}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onView(meal)
+                }}
+              >
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            )}
             <DeleteButton aria-label={`Delete ${meal.name}`} onClick={() => onDelete(meal.id)}>
               X
             </DeleteButton>

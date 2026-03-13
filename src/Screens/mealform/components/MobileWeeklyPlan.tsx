@@ -7,7 +7,8 @@ type MobileWeeklyPlanProps = {
   mealNameById: Map<string, string>
   onAssignToSlot: (day: WeekDay, slot: WeekSlot) => void
   onEditMeal: (meal: Meal) => void
-  onDeleteMeal: (mealId: string) => void
+  onViewMeal: (meal: Meal) => void
+  onUnassignFromSlot: (day: WeekDay, slot: WeekSlot) => void
   onClear: () => void
   theme: MealTheme
 }
@@ -28,7 +29,8 @@ const MobileWeeklyPlan = ({
   mealNameById,
   onAssignToSlot,
   onEditMeal,
-  onDeleteMeal,
+  onViewMeal,
+  onUnassignFromSlot,
   onClear,
   theme,
 }: MobileWeeklyPlanProps) => (
@@ -87,7 +89,7 @@ const MobileWeeklyPlan = ({
                     aria-label={`Delete ${mealNameById.get(weeklyPlan[day].lunch ?? '') ?? 'meal'}`}
                     className="absolute -right-3 -top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border bg-white transition-colors duration-150 hover:bg-slate-50"
                     style={{ borderColor: '#fecaca', color: '#dc2626' }}
-                    onClick={() => onDeleteMeal(weeklyPlan[day].lunch ?? '')}
+                    onClick={() => onUnassignFromSlot(day, 'lunch')}
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -135,6 +137,24 @@ const MobileWeeklyPlan = ({
                       <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
                     </svg>
                   </button>
+                  <button
+                    type="button"
+                    title="View Recipe"
+                    className="absolute right-12 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md transition-colors duration-150 hover:bg-slate-50"
+                    style={{ color: theme.textSecondary }}
+                    onClick={() => {
+                      const mealId = weeklyPlan[day].lunch
+                      const mealName = mealNameById.get(mealId ?? '')
+                      if (mealId && mealName) {
+                        onViewMeal({ id: mealId, name: mealName, type: 'lunch' })
+                      }
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </button>
                 </>
               ) : null}
             </div>
@@ -160,7 +180,7 @@ const MobileWeeklyPlan = ({
                     aria-label={`Delete ${mealNameById.get(weeklyPlan[day].dinner ?? '') ?? 'meal'}`}
                     className="absolute -right-3 -top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border bg-white transition-colors duration-150 hover:bg-slate-50"
                     style={{ borderColor: '#fecaca', color: '#dc2626' }}
-                    onClick={() => onDeleteMeal(weeklyPlan[day].dinner ?? '')}
+                    onClick={() => onUnassignFromSlot(day, 'dinner')}
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -206,6 +226,24 @@ const MobileWeeklyPlan = ({
                     >
                       <path d="M12 20h9" />
                       <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    title="View Recipe"
+                    className="absolute right-12 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md transition-colors duration-150 hover:bg-slate-50"
+                    style={{ color: theme.textSecondary }}
+                    onClick={() => {
+                      const mealId = weeklyPlan[day].dinner
+                      const mealName = mealNameById.get(mealId ?? '')
+                      if (mealId && mealName) {
+                        onViewMeal({ id: mealId, name: mealName, type: 'dinner' })
+                      }
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
                     </svg>
                   </button>
                 </>

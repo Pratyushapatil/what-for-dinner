@@ -7,6 +7,8 @@ type MealRow = {
   id: string
   name: string
   type: WeekSlot
+  ingredients?: string
+  instructions?: string
 }
 
 type WeeklyPlanRow = {
@@ -19,7 +21,7 @@ class MealSupabaseStore {
   static async loadMeals(): Promise<Meal[]> {
     const { data, error } = await supabase
       .from('meals')
-      .select('id, name, type')
+      .select('id, name, type, ingredients, instructions')
       .order('created_at', { ascending: true })
 
     if (error) {
@@ -29,11 +31,16 @@ class MealSupabaseStore {
     return (data ?? []) as MealRow[]
   }
 
-  static async addMeal(name: string, type: WeekSlot): Promise<Meal> {
+  static async addMeal(
+    name: string, 
+    type: WeekSlot, 
+    ingredients?: string, 
+    instructions?: string
+  ): Promise<Meal> {
     const { data, error } = await supabase
       .from('meals')
-      .insert({ name, type })
-      .select('id, name, type')
+      .insert({ name, type, ingredients, instructions })
+      .select('id, name, type, ingredients, instructions')
       .single()
 
     if (error || !data) {
@@ -94,6 +101,18 @@ class MealSupabaseStore {
 
   static async clearPlan(): Promise<void> {
     const { error } = await supabase.from('weekly_plan').delete().in('day', [...WEEK_DAYS])
+    if (error) {
+      throw error
+    }
+  }
+
+  static async unassignMealFromSlot(day: WeekDay, slot: WeekSlot): Promise<void> {
+    const { error } = await supabase
+      .from('weekly_plan')
+      .delete()
+      .eq('day', day)
+      .eq('slot', slot)
+
     if (error) {
       throw error
     }

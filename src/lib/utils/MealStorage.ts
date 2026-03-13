@@ -2,6 +2,8 @@ export type Meal = {
   id: string
   name: string
   type: 'lunch' | 'dinner'
+  ingredients?: string
+  instructions?: string
 }
 
 class MealStorage {
